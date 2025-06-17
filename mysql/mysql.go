@@ -1,4 +1,4 @@
-package pingconnection
+package mysql
 
 import (
 	"database/sql"
@@ -6,7 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func PingMySQL(dsn string) error {
+func Ping(dsn string) error {
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return err

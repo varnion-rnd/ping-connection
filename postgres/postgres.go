@@ -1,4 +1,4 @@
-package pingconnection
+package postgres
 
 import (
 	"database/sql"
@@ -6,7 +6,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func PingPostgres(dsn string) error {
+func Ping(dsn string) error {
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return err
