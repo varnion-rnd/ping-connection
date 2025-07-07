@@ -32,20 +32,23 @@ var (
 )
 
 type Connection struct {
-	ctx    context.Context
-	dsn    string
-	es     *elasticsearch.Client
-	influx influxdb2.Client
-	mongo  *mongo.Client
-	redis  *redis.Client
+	CTX    context.Context
+	DSN    string
+	ES     *elasticsearch.Client
+	INFLUX influxdb2.Client
+	MONGO  *mongo.Client
+	REDIS  *redis.Client
 }
 
-func (conn *Connection) GetConnection(c *gin.Context) gin.HandlerFunc {
-	ConnectionName := os.Getenv(CONNECTION_TYPE)
+func (conn *Connection) GetConnection(c *gin.Context, ConnectionName string) gin.HandlerFunc {
+	if ConnectionName == "" {
+		ConnectionName = os.Getenv(CONNECTION_TYPE)
+	}
+
 	switch ConnectionName {
 	case CONNECTION_NAME[0]:
 		return func(c *gin.Context) {
-			err := elastic.Ping(conn.ctx, conn.es)
+			err := elastic.Ping(conn.CTX, conn.ES)
 			if err != nil {
 				c.JSON(
 					http.StatusBadGateway,
@@ -60,7 +63,7 @@ func (conn *Connection) GetConnection(c *gin.Context) gin.HandlerFunc {
 		}
 	case CONNECTION_NAME[1]:
 		return func(c *gin.Context) {
-			err := influx.Ping(conn.ctx, conn.influx)
+			err := influx.Ping(conn.CTX, conn.INFLUX)
 			if err != nil {
 				c.JSON(
 					http.StatusBadGateway,
@@ -75,7 +78,7 @@ func (conn *Connection) GetConnection(c *gin.Context) gin.HandlerFunc {
 		}
 	case CONNECTION_NAME[2]:
 		return func(c *gin.Context) {
-			err := mongoPing.Ping(conn.ctx, conn.mongo)
+			err := mongoPing.Ping(conn.CTX, conn.MONGO)
 			if err != nil {
 				c.JSON(
 					http.StatusBadGateway,
@@ -91,7 +94,7 @@ func (conn *Connection) GetConnection(c *gin.Context) gin.HandlerFunc {
 
 	case CONNECTION_NAME[3]:
 		return func(c *gin.Context) {
-			err := mysql.Ping(conn.dsn)
+			err := mysql.Ping(conn.DSN)
 			if err != nil {
 				c.JSON(
 					http.StatusBadGateway,
@@ -107,7 +110,7 @@ func (conn *Connection) GetConnection(c *gin.Context) gin.HandlerFunc {
 
 	case CONNECTION_NAME[4]:
 		return func(c *gin.Context) {
-			err := postgres.Ping(conn.dsn)
+			err := postgres.Ping(conn.DSN)
 			if err != nil {
 				c.JSON(
 					http.StatusBadGateway,
@@ -123,7 +126,7 @@ func (conn *Connection) GetConnection(c *gin.Context) gin.HandlerFunc {
 
 	case CONNECTION_NAME[5]:
 		return func(c *gin.Context) {
-			err := redisPing.Ping(conn.ctx, conn.redis)
+			err := redisPing.Ping(conn.CTX, conn.REDIS)
 			if err != nil {
 				c.JSON(
 					http.StatusBadGateway,
